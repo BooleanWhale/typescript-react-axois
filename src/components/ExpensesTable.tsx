@@ -15,6 +15,7 @@ export default function ExpensesTable({expenses, setExpenses}: Props) {
 
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [tableRows, setTableRows] = useState<JSX.Element[]>([]);
+  const [total, setTotal] = useState(0);
 
   const deleteExpense = (description:string):void => {
     const updateExpenses = expenses.filter(expense => {
@@ -45,6 +46,7 @@ export default function ExpensesTable({expenses, setExpenses}: Props) {
     });
 
     setTableRows(tableRows);
+    setTotal(filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0))
   }, [selectedCategory, expenses]);
 
   return (
@@ -73,6 +75,10 @@ export default function ExpensesTable({expenses, setExpenses}: Props) {
         </thead>
         <tbody>
         {tableRows}
+        <tr>
+          <td>Total</td>
+          <td>${total}</td>
+        </tr>
         </tbody>
       </table>
     </div>
