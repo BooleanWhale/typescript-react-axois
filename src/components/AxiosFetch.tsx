@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import apiClient, { CanceledError } from '../services/api-client';
+import UserService, { MyUser } from '../services/user-service';
 
 type Props = {}
-
-// Not all object properties need to be included
-interface MyUser {
-  id: number;
-  name: string;
-}
 
 export default function AxiosFetch({}: Props) {
   const [users, setUsers] = useState<MyUser[]>([]);
@@ -19,8 +14,8 @@ export default function AxiosFetch({}: Props) {
     const controller = new AbortController();
     setLoading(true);
 
-    apiClient
-      .get<MyUser[]>('/users', {signal: controller.signal})
+    const { request, cancel } = UserService.getAllUsers();
+      request
       .then(response => setUsers(response.data))
       .catch(error => {
         if (error instanceof CanceledError) return;
@@ -28,14 +23,14 @@ export default function AxiosFetch({}: Props) {
       })
       .finally(() => setLoading(false));
 
-    return () => controller.abort();
+    return () => cancel();
   }, []);
 
   const deleteUser = (user:MyUser):void => {
     const backupUsers = [...users];
     setUsers(users.filter(u => u.id !== user.id));
-    apiClient
-      .delete('/users/' + user.id)
+    
+    UserService.deleteUser(user)
       .catch(error => {
         if (error instanceof CanceledError) return;
         setErrorMessage(error.message);
@@ -46,8 +41,7 @@ export default function AxiosFetch({}: Props) {
   const addUser = (newUser:MyUser):void => {
     const backupUsers = [...users];
     setUsers([newUser, ...users]);
-    apiClient
-      .post('/users', newUser)
+    UserService.addUser(newUser)
       .then(({ data }) => setUsers([data, ...users]))
       .catch(error => {
         if (error instanceof CanceledError) return;
@@ -60,8 +54,7 @@ export default function AxiosFetch({}: Props) {
     const backupUsers = [...users];
     const updatedUser = {...user, name: 'Miss ' + user.name};
     setUsers(users.map(u => u.id !== user.id ? u : updatedUser));
-    apiClient
-      .patch('/users/' + user.id, updatedUser)
+    UserService.updateUser(updatedUser)
       .catch(error => {
         if (error instanceof CanceledError) return;
         setErrorMessage(error.message);
