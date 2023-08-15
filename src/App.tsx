@@ -5,6 +5,8 @@ import ExpandText from './components/ExpandText'
 import Form from './components/Form'
 import ExpensesForm from './components/ExpensesForm'
 import ExpensesTable from './components/ExpensesTable'
+import axios from 'axios'
+import AxiosFetch from './components/AxiosFetch'
 import './App.css'
 import './index.css'
 
@@ -15,13 +17,8 @@ type Expense = {
 };
 
 function App() {
-  const [count, setCount] = useState(0)
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-
-  const items:string[] = [
-    'awefawef',
-    'awefawefawef'
-  ]
+  // const [count, setCount] = useState(0)
+  // const [expenses, setExpenses] = useState<Expense[]>([]);
 
   return (
     <div className="App">
@@ -31,9 +28,9 @@ function App() {
       {/* <ExpandText maxChars={5}>
         awefawefawefawefawefawefwa
       </ExpandText> */}
-
-      <ExpensesForm expenses={expenses} setExpenses={setExpenses} />
-      <ExpensesTable expenses={expenses} setExpenses={setExpenses} />
+      {/* <ExpensesForm expenses={expenses} setExpenses={setExpenses} />
+      <ExpensesTable expenses={expenses} setExpenses={setExpenses} /> */}
+      <AxiosFetch/>
     </div>
   )
 }
