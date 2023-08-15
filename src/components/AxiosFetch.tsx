@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import axios, { AxiosError, CanceledError } from 'axios'
+import apiClient, { CanceledError } from '../services/api-client';
 
 type Props = {}
 
@@ -19,7 +19,8 @@ export default function AxiosFetch({}: Props) {
     const controller = new AbortController();
     setLoading(true);
 
-    axios.get<MyUser[]>('https://jsonplaceholder.typicode.com/users', {signal: controller.signal})
+    apiClient
+      .get<MyUser[]>('/users', {signal: controller.signal})
       .then(response => setUsers(response.data))
       .catch(error => {
         if (error instanceof CanceledError) return;
@@ -33,7 +34,8 @@ export default function AxiosFetch({}: Props) {
   const deleteUser = (user:MyUser):void => {
     const backupUsers = [...users];
     setUsers(users.filter(u => u.id !== user.id));
-    axios.delete('https://jsonplaceholder.typicode.com/users/' + user.id)
+    apiClient
+      .delete('/users/' + user.id)
       .catch(error => {
         if (error instanceof CanceledError) return;
         setErrorMessage(error.message);
@@ -44,7 +46,8 @@ export default function AxiosFetch({}: Props) {
   const addUser = (newUser:MyUser):void => {
     const backupUsers = [...users];
     setUsers([newUser, ...users]);
-    axios.post('https://jsonplaceholder.typicode.com/users', newUser)
+    apiClient
+      .post('/users', newUser)
       .then(({ data }) => setUsers([data, ...users]))
       .catch(error => {
         if (error instanceof CanceledError) return;
@@ -57,7 +60,8 @@ export default function AxiosFetch({}: Props) {
     const backupUsers = [...users];
     const updatedUser = {...user, name: 'Miss ' + user.name};
     setUsers(users.map(u => u.id !== user.id ? u : updatedUser));
-    axios.patch('https://jsonplaceholder.typicode.com/users/' + user.id, updatedUser)
+    apiClient
+      .patch('/users/' + user.id, updatedUser)
       .catch(error => {
         if (error instanceof CanceledError) return;
         setErrorMessage(error.message);
