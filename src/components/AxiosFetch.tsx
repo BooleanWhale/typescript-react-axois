@@ -13,7 +13,7 @@ export default function AxiosFetch({}: Props) {
     const controller = new AbortController();
     setLoading(true);
 
-    const { request, cancel } = UserService.getAllUsers();
+    const { request, cancel } = UserService.getAll<MyUser>();
       request
       .then(response => setUsers(response.data))
       .catch(error => {
@@ -29,7 +29,7 @@ export default function AxiosFetch({}: Props) {
     const backupUsers = [...users];
     setUsers(users.filter(u => u.id !== user.id));
     
-    UserService.deleteUser(user)
+    UserService.delete(user)
       .catch(error => {
         if (error instanceof CanceledError) return;
         setErrorMessage(error.message);
@@ -40,7 +40,7 @@ export default function AxiosFetch({}: Props) {
   const addUser = (newUser:MyUser):void => {
     const backupUsers = [...users];
     setUsers([newUser, ...users]);
-    UserService.addUser(newUser)
+    UserService.add(newUser)
       .then(({ data }) => setUsers([data, ...users]))
       .catch(error => {
         if (error instanceof CanceledError) return;
@@ -53,7 +53,7 @@ export default function AxiosFetch({}: Props) {
     const backupUsers = [...users];
     const updatedUser = {...user, name: 'Miss ' + user.name};
     setUsers(users.map(u => u.id !== user.id ? u : updatedUser));
-    UserService.updateUser(updatedUser)
+    UserService.update(updatedUser)
       .catch(error => {
         if (error instanceof CanceledError) return;
         setErrorMessage(error.message);
