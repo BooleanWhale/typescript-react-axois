@@ -19,6 +19,7 @@ type Expense = {
 function App() {
   // const [count, setCount] = useState(0)
   // const [expenses, setExpenses] = useState<Expense[]>([]);
+  
 
   return (
     <div className="App">

@@ -1,29 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import UserService, { MyUser } from '../services/user-service';
+import useUsers from '../hooks/useUsers';
+import { CanceledError } from 'axios';
 
 type Props = {}
 
 export default function AxiosFetch({}: Props) {
-  const [users, setUsers] = useState<MyUser[]>([]);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    // cleanup function (function built into modern browsers)
-    const controller = new AbortController();
-    setLoading(true);
-
-    const { request, cancel } = UserService.getAll<MyUser>();
-      request
-      .then(response => setUsers(response.data))
-      .catch(error => {
-        if (error instanceof CanceledError) return;
-        setErrorMessage(error.message);
-      })
-      .finally(() => setLoading(false));
-
-    return () => cancel();
-  }, []);
+  // custom hook for loading users
+  const { users, setUsers, errorMessage, setErrorMessage, loading } = useUsers();
 
   const deleteUser = (user:MyUser):void => {
     const backupUsers = [...users];
